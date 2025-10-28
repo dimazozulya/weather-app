@@ -1,8 +1,11 @@
 import './App.css'
+import Header from './components/header/Header'
 
 function App() {
   return (
-    <h1>WEATHER-APP</h1>
+    <div className="fixed inset-0 bg-blue-700 text-white">
+        <Header/>
+    </div>
   )
 }
 
