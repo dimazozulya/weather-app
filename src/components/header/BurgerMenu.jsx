@@ -21,6 +21,7 @@ export default function BurgerMenu ({isBurgerOpen}) {
       const handleSelect = (city) => {
         setCurrentCity (city);
       }
+      const isSelected = (select) => currentCity.id === select.id
 
 
     return (
@@ -40,11 +41,14 @@ export default function BurgerMenu ({isBurgerOpen}) {
                     {filtered.map (c => (
                         <div className="flex justify-between px-10 py-1">
                             <li className='text-xl' key={c.id}>{c.name}</li>
-                            <button className='p-1 bg-blue-700 text-white cursor-pointer border rounded hover:bg-white hover:text-blue-700 transition-all duration-300' 
+                            {isSelected (c)
+                            ? <button disabled className='p-1 bg-emerald-700 text-white border rounded'>
+                                selected</button> 
+                            : <button className='p-1 bg-blue-700 text-white cursor-pointer border rounded hover:bg-white hover:text-blue-700 transition-all duration-300' 
                             onClick={() => {
                                 handleSelect(c);
                                 setQuery('');
-                            }}>select</button>
+                            }}>select</button>}
                         </div>
                     ))}
                     {filtered.length === 0 && (
