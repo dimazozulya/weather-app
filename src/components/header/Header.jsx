@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import BurgerButton  from "../ui/BurgerButton"
 import BurgerMenu from "./BurgerMenu";
-import { useApp } from "../../context/AppContext"
 
 export default function Header () {
     
