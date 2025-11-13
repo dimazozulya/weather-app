@@ -1,13 +1,18 @@
 import ToggleButton from "../ui/ToggleButton";
 import { useApp } from "../../context/AppContext";
-import { useState, useMemo } from "react";
+import { useState, useEffect ,useMemo } from "react";
 import { mockCities } from "../../constants/mockCities";
+import { searchCities } from "../../api/weather";
 
 export default function BurgerMenu ({isBurgerOpen}) {
     const { units, toggleUnits, currentCity, setCurrentCity } = useApp();
     const isOn = units === 'metric';
 
     const [query, setQuery ] = useState ('');
+    const [apiCities, setApiCities] = useState ([]);
+    const [loading, setLoading] = useState (false);
+    const [error, setError] = useState('');
+
 
       const filtered = useMemo (() => {
         const value = query.trim().toLowerCase();
@@ -18,10 +23,36 @@ export default function BurgerMenu ({isBurgerOpen}) {
         )
       }, [query]);
 
+      useEffect(() => {
+  const value = query.trim();
+
+  setError("");
+  setApiCities([]);
+
+  // Если пусто — ничего не запрашиваем, остаёмся на моках
+  if (!value) return;
+
+  // Для простоты: если меньше 2 букв — тоже не дергаем API
+  if (value.length < 2) return;
+
+  setLoading(true);
+  searchCities(value)
+    .then(list => {
+      setApiCities(list);
+    })
+    .catch(e => {
+      setError(e.message || "Search failed");
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+}, [query]);
+
       const handleSelect = (city) => {
         setCurrentCity (city);
       }
       const isSelected = (select) => currentCity.id === select.id
+      const citiesToShow = query.trim().length >= 2 && apiCities.length > 0 ? apiCities : filtered;
 
 
     return (
@@ -38,9 +69,9 @@ export default function BurgerMenu ({isBurgerOpen}) {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}/>
                 <ul>
-                    {filtered.map (c => (
-                        <div className="flex justify-between px-10 py-1">
-                            <li className='text-xl' key={c.id}>{c.name}</li>
+                    {citiesToShow.map (c => (
+                        <div key={c.id} className="flex justify-between px-10 py-1">
+                            <li className='text-xl'>{c.name}</li>
                             {isSelected (c)
                             ? <button disabled className='p-1 bg-emerald-700 text-white border rounded'>
                                 selected</button> 
@@ -51,7 +82,7 @@ export default function BurgerMenu ({isBurgerOpen}) {
                             }}>select</button>}
                         </div>
                     ))}
-                    {filtered.length === 0 && (
+                    {citiesToShow.length === 0 && query.trim().length >= 2 && !loading && !error && (
                         <h2 className="text-red-700">not found</h2>
                     )} 
                 </ul>

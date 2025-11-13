@@ -1,7 +1,7 @@
 
 
 export default function ToggleButton ({isOn, onToggle}) {
-
+    
     return (
          <button
          role="switch"

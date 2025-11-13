@@ -1,19 +1,15 @@
-// async function getWeather () {
+import { fetchJSON } from "./http";
 
-//     const API_KEY = import.meta.env.VITE_WEATHER_KEY;
-//     const city = 'London';
+export function getCurrent (q, opts ={}) {
+    return fetchJSON ('/current.json', {q, aqi: 'no', ...opts})
+}
 
-//     try {
-//         const res = await fetch (
-//             `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${city}&aqi=no`
-//         );
-//         if (!res.ok) throw new Error (`Ошибка : ${res.status}`);
-
-//         const data = await res.json();
-//         console.log ('Ответ от API :', data)
-//     } catch (err) {
-//         console.error ('Ошибка запроса:', err);
-//     }
-// }
-
-// getWeather ()
+export function searchCities (q) {
+    return fetchJSON ('/search.json', { q })
+    .then (list => list.map(x => ({
+        id :  `${x.name}-${x.country}-${x.lat}-${x.lon}`,
+        name: x.name,
+        country : x.country,
+        }))
+    )
+}

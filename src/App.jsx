@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="fixed inset-0 bg-blue-700 text-white">
         <Header/>
-        <WeatherCard/>
+        <WeatherCard city='Amsterdam' units='metric'/>
     </div>
   )
 }
